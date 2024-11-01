@@ -8,8 +8,9 @@ import { Editor } from "./editor/Editor";
 import ActiveCollaborators from "./ActiveCollaborators";
 import { Input } from "./ui/input";
 import Image from "next/image";
-import { updateDocuments } from "@/lib/actions/room.actions";
+import { updateDocument } from "@/lib/actions/room.actions";
 import Loader from "./Loader";
+import ShareModal from "./ShareModal";
 
 const CollaborativeRoom = ({
   roomId,
@@ -32,7 +33,7 @@ const CollaborativeRoom = ({
 
       try {
         if (documentTitle !== roomMetadata.title) {
-          const updatedDocument = await updateDocuments(roomId, documentTitle);
+          const updatedDocument = await updateDocument(roomId, documentTitle);
 
           if (updatedDocument) {
             setEdit(false);
@@ -53,7 +54,7 @@ const CollaborativeRoom = ({
         !containerRef.current.contains(e.target as Node)
       ) {
         setEdit(false);
-        updateDocuments(roomId, documentTitle);
+        updateDocument(roomId, documentTitle);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -114,6 +115,13 @@ const CollaborativeRoom = ({
             </div>
             <div className="flex w-full flex-1 justify-end gap-2 sm:gap-3">
               <ActiveCollaborators />
+
+              <ShareModal
+                roomId={roomId}
+                collaborators={users}
+                creatorId={roomMetadata.creatorId}
+                currentUserType={currentUserType}
+              />
               <SignedOut>
                 <SignInButton />
               </SignedOut>
